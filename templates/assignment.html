@@ -1,0 +1,122 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{assignment["title"]}}
+{% endblock %}
+
+{% block main %}
+    <h1>{{assignment["title"]}}</h1>
+    <br>
+    <table class="table table-bordered table-{{assignment['colour']}}">
+        <tr>
+            <th scope="row">Course</th>
+            <td>{{assignment["name"]}}</td>
+        </tr>
+        <tr>
+            <th scope="row" style="width: 25%;">Description</th>
+            <td>{{assignment["details"] or "No description provided"}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Due date</th>
+            <td>{{assignment["due_date"]}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Priority</th>
+            <td>{{assignment["priority"]}}</td>
+        </tr>
+        <tr>
+            <th scope="row">Status</th>
+            <td>
+            {% if assignment["completion_status"] == 1 %}
+                Complete
+            {% else %}
+                Incomplete
+            {% endif %}
+            {% if tasks %}
+                - {{ tasks|selectattr('completion_status', 'equalto', 1)|list|length }}/{{tasks|length}} subtasks complete
+            {% endif %}</td>
+        </tr>
+    </table>
+    <br>
+
+    <h2>Subtasks</h2>
+    {% if tasks %}
+    <form method="POST" action="/tasks">
+        <input type="hidden" name="id" value="{{assignment['id']}}">
+        <input type="hidden" name="update_subtasks" value="true">
+        {% for task in tasks %}
+            <div class="row row-cols-lg-auto g-3 align-items-center align-center justify-content-center">
+            <div class="col-12">
+                <input type="checkbox" class="form-check-input" name=subtask id="{{task['id']}}" value="{{task['id']}}"
+                {% if task['completion_status'] == 1 %}
+                    checked
+                {% endif %}>
+                <label for="{{task['id']}}" class="form-test-label form-check-label">{{task['title']}}</label>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-danger" name="delete_subtask" value="{{task['id']}}">Delete</button>
+            </div></div>
+            <br>
+        {% endfor %}
+        <button type="Submit" class="btn btn-primary">Save Changes</button>
+    </form>
+    {% endif %}
+<br>
+
+    <form class="row row-cols-lg-auto g-3 align-items-center align-center justify-content-center" action="/tasks" method="POST">
+        <input type="hidden" name="id" value="{{assignment['id']}}">
+        <input type="hidden" name="add_subtask" value="true">
+        <div class="col-12">
+            <input type="text" class="form-control" placeholder="Subtask" name="subtask_to_add">
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Add Subtask</button>
+        </div>
+    </form>
+
+
+
+    <br>
+
+    <table class="table" style="width: 75%; align: center; margin: 0px auto;">
+        <tr>
+            {% if assignment["completion_status"] == 1 %}
+                <td>
+                    <form class="form" method="get">
+                        <button class="btn" type="submit">
+                            <img src="static/complete_button.svg" alt="Incomplete Button" style="max-width: 25%">
+                            <br>Mark as Incomplete</button>
+                        <input type="hidden" name="id" value="{{assignment['id']}}">
+                        <input type="hidden" name="complete" value="False">
+                    </form>
+                </td>
+            {% else %}
+                <td>
+                    <form class="form" method="get">
+                        <button class="btn" type="submit">
+                            <img src="static/complete_button.svg" alt="Complete Button" style="max-width: 25%">
+                            <br>Mark as Complete</button>
+                        <input type="hidden" name="id" value="{{assignment['id']}}">
+                        <input type="hidden" name="complete" value="True">
+                    </form>
+                </td>
+            {% endif %}
+            <td>
+                <form class="form" method="post" action="/add_assignment">
+                    <button class="btn" type="submit">
+                        <img src="static/edit_button.svg" alt="Edit Button">
+                        <br>Edit</button>
+                    <input type="hidden" name="id" value="{{assignment['id']}}">
+                </form>
+            </td>
+            <td>
+                <form class="form" method="get">
+                    <button type="submit" class="btn" name="submit_button" onclick="return confirm('Are you sure you would like to delete this assignment?')" value="delete_button">
+                        <img src="static/delete_button.svg" alt="Delete Button" style="max-width: 25%">
+                        <br>Delete</button>
+                    <input type="hidden" name="id" value="{{assignment['id']}}">
+                </form>
+            </td>
+        </tr>
+    </table>
+{% endblock %}

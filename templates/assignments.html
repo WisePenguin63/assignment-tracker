@@ -1,0 +1,117 @@
+{% extends "layout.html" %}
+
+{% set search_assignments = filters["search-assignment"] | default('', true) %}
+{% set filter_course = filters["filter-course"] | default('All courses', true) %}
+{% set sort = filters["sort-assignments"] | default('Due first', true) %}
+{% set completion = filters["filter-completion"] | default('0', true) %}
+{% set priority = filters["filter-priority"] | default('0', true) %}
+
+{% block title %}
+    Assignments
+{% endblock %}
+
+{% block main %}
+    <h1>Assignments</h1>
+    <div>
+        <p>Keep track of your assignments, deadlines and priorities in one place. Use the filters below to find exactly what you're looking for.</p>
+    </div>
+
+
+    <!-- <form method="GET" action="/add_assignment"><button type="submit" class="btn" title="add course">
+        <image src="static/add_button.svg" role="img">
+        <br>Add</button>
+    </form> -->
+
+    <form method="GET" action="/add_assignment"><button type="submit" class="btn btn-primary" tilte="add course">
+        + Add Assignment
+    </button></form><br>
+
+    <form method="GET" class="row g-3 align-items-center">
+        <div class="col-auto">
+            <input type="search" class="form-control" name="search-assignment" placeholder="Search by title" value="{{search_assignments}}">
+        </div>
+        <div class="col-auto">
+            <select class="form-select" name="filter-course">
+                <option disabled>Select Course</option>
+                <option {% if filter_course == "All courses" %}selected{% endif %}>All courses</option>
+                {% for course in courses %}
+                    {% set current_course = course["name"] %}
+                    <option value="{{course['id']}}"
+                        {% if course['id']|string == filter_course %}selected{% endif %}
+                        >{{current_course}}</option>
+                        {{course['id']|pprint}}
+                        {{filter_course|pprint}}
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-auto">
+            <select class="form-select" name="sort-assignments">
+                <option disabled>Sort Assignments</option>
+                <option {% if sort == 'Due first' %}selected{% endif %}>Due first</option>
+                <option {% if sort == 'Due last' %}selected{% endif %}>Due last</option>
+                <option {% if sort == 'Alphabetically first' %}selected{% endif %}>Alphabetically first</option>
+                <option {% if sort == 'Alphabetically last' %}selected{% endif %}>Alphabetically last</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <select class="form-select" name="filter-completion">
+                <option disabled>Filter by status</option>
+                <option {% if completion == '2' %}selected{% endif %} value="2">All</option>
+                <option {% if completion == '1' %}selected{% endif %} value="1">Complete</option>
+                <option {% if completion == '0' %}selected{% endif %} value="0">Incomplete</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <select class="form-select" name="filter-priority">
+                <option disabled>Choose priority</option>
+                <option {% if priority == '0' %}selected{% endif %} value="0">All priorities</option>
+                <option {% if priority == '1' %}selected{% endif %} value="1">Low</option>
+                <option {% if priority == '2' %}selected{% endif %} value="2">Normal</option>
+                <option {% if priority == '3' %}selected{% endif %} value="3">High</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </div>
+    </form>
+
+
+    {% if assignments %}
+    <table class="table">
+        <thead>
+            <th scope="col" style="width: 20%">Name</th>
+            <th scope="col" style="width: 20%">Course</th>
+            <th scope="col" style="width: 20%">Due date</th>
+            <th scope="col" style="width: 20%">Priority</th>
+            <th scope="col" style="width: 20%">Completion status</th>
+        </thead>
+        <tbody class="table-group-divider">
+            {% for assignment in assignments %}
+                {% set colour = assignment["colour"] %}
+                <tr class="table-{{colour}}">
+                    {% set id = assignment["id"] %}
+                    {% set name = assignment["title"] %}
+                    {% set course = assignment["name"] %}
+                    {% set due_date = assignment["due_date"] %}
+                    {% set complete = assignment["completion_status"] %}
+                    {% set priority = assignment["priority"] %}
+                    {% set pc = assignment["priority-c"] %}
+                    <td><a href="?id={{id}}" class="invis-link">{{name}}</a></td>
+                    <td>{{course}}</td>
+                    <td>{{due_date or "No deadline"}}</td>
+                    <td class="table-{{pc}}">{{priority}}</td>
+                    {% if complete %}
+                        <td>Complete</td>
+                    {% else %}
+                        <td>Incomplete</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% else %}
+    <br>
+    <b style="font-size: large">You dont seem to have any assignments matching those filters at the moment. Press the add button above to add a new one</b>
+    {% endif %}
+{% endblock %}

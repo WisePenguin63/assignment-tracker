@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Courses
+{% endblock %}
+
+{% block main %}
+    <h1>Courses</h1>
+    <div>
+        <p>This is the main home of all of your courses.</p>
+        <p>From here, you can view and edit your courses. You are also able to add new courses to your list.</p>
+    </div>
+    <table class="table">
+        <thead>
+            <th scope="col" style="width: 20%">Name</th>
+            <th scope="col" style="width: 60%">Details</th>
+            <th scope="col" style="width: 20%">
+                <form method="GET" action="/add_course"><button type="submit" class="btn" title="add course">
+                    <img src="static/add_button.svg">
+                    <br>Add</button>
+                </form>
+            </th>
+        </thead>
+        <tbody class="table-group-divider">
+            {% for course in courses %}
+                {% set name = course["name"] %}
+                {% set details = course["details"] %}
+                {% set colour = course["colour"] %}
+                <tr class="table-{{colour}}">
+                    <th scope="row">{{name}}</th>
+                    <td>{{details}}</td>
+                    <td><form method="post" action="/add_course"><button type="submit" class="btn" title="edit course" name="id" value="{{course['id']}}">
+                        <img src="static/edit_button.svg">
+                        <br>Edit
+                    </button></form></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

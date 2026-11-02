@@ -1,0 +1,99 @@
+Good✓
+    Authentication✓
+        Register  ✓
+        Login  ✓
+        Logout  ✓
+
+    Courses ✓
+        Add course ✓
+        Edit course ✓
+        Delete course ✓
+
+    Assignments✓
+        Title ✓
+        Due date ✓
+        Associated course (or General) ✓
+        Completed status ✓
+
+    Dashboard✓
+        Table of assignments ✓
+        Sort/filter by: ✓
+            Course ✓
+            Due date ✓
+            Completion status ✓
+
+
+Better (Recommended Enhancements)
+    Assignment Management✓
+        Priority level✓
+            Low✓
+            Medium✓
+            High✓
+        Assignment details page ✓
+            View full description ✓
+            Due date ✓
+            Course ✓
+            Priority✓
+            Completion tatus ✓
+    Subtasks
+        Add subtasks to an assignment ✓
+        Mark subtasks as complete ✓
+        Display progress ✓
+        Example: 3/5 subtasks completed ✓
+    Dashboard Improvements
+        Search assignments by title ✓
+        Highlight overdue assignments ✓
+        Show upcoming deadlines
+
+Best (Stretch Goals)
+    Calendar
+        Monthly/weekly calendar view
+        Display:
+            Assignments
+            Due dates
+            Personal events
+    Timetable
+        Add class schedule
+            Course
+            Day of week
+            Start time
+            End time
+        Display timetable alongside calendar
+    Notifications
+        Email reminders for upcoming assignments
+        Configurable reminder timing
+            1 day before
+            3 days before
+            1 week before
+
+
+
+planner.db schema:
+
+users
+    id (prim key) int, unique, auto increment
+    email (not sure which one), str, unique, not null
+    password_hash, str, not null
+
+courses
+    id (prim key) int, auto increment, not null
+    user_id (foreign key) int, not null
+    name, str, not null
+    details, str
+    colour, str (bootstrap colour)
+
+assignments
+    id (prim key), int, auto increment, unique, not null
+    user_id (foreign key), int, not null
+    course_id (foreign key), int, not null
+    title, str, not null
+    details, str
+    due_date, datetime
+    completion_status, bool, not null
+    priority, int
+
+tasks
+    id (prim key), int, autoincrement, unique, not null
+    assignment_id (fore key), int, not null
+    title, str, not null
+    completion_status, book, not null, default 0

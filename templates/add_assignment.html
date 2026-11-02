@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+
+{% if assignment is not defined %}
+    {% set assignment = false %}
+{% endif %}
+
+{% block title %}
+    {{change}} assignment
+{% endblock %}
+
+{% block main %}
+    <h1>{{change}} assignment</h1>
+    <br>
+    <form class="form-floating mb-3" style="width: 100%" action="/assignments" method="POST">
+
+        {% if assignment is defined %}
+            <input type="hidden" name="id" value="{{assignment['id']}}">
+        {% endif %}
+        <table class="table table-bordered" style="width: 100%">
+            <tr>
+                <th scope="row"><label for="name">Name</label></th>
+                <td><input type="text" value="{{assignment['title']}}" name="name" class="form-control" required></td>
+            </tr>
+            <tr>
+                <th scope="row"><label for="course">Course</label></th>
+                <td>
+                    <select class="form-select" name="course" required>
+                        <option {% if assignment == false %}selected{% endif %} disabled hidden value="">Select a course</option>
+                        {% for course in courses %}
+                            <option value="{{course['id']}}" class="option-{{course['colour']}}"
+                            {% if course['name'] == assignment['name'] %}selected{% endif %}>
+                            {{course['name']}}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row" style="width: 25%;"><label for="desc">Description</label></th>
+                <td><textarea class="form-control" name="desc">{{assignment['details']}}</textarea></td>
+            </tr>
+            <tr>
+                <th scope="row"><label for="due_date">Due date</label></th>
+                <td><input type="datetime-local" class="form-control" value="{{assignment['due_date']}}" name="due_date"></td>
+            </tr>
+            <tr>
+                <th scope="row"><label for="priority">Priority</label></th>
+                <td>
+                    <input type="range" class="form-range" min="1" max="3" name="priority" value="{{assignment['priority'] | default(2, true)}}">
+                    <div class="slider-labels">
+                        <span>Low</span>
+                        <span>Medium</span>
+                        <span>High</span>
+                    </div>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><label for="completion_status">Complete</label></th>
+                <td>
+                    <select class="form-select" name="completion_status">
+                        <option {% if assignment is not defined or assignment['completion_status']==0 %}selected{% endif %} value="0">No</option>
+                        <option {% if assignment['completion_status']==1 %}selected{% endif %} value="1">Yes</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <button type="reset" class="btn btn-danger">Reset</button>
+        <button type="submit" class="btn-warning btn" name="submit_button" value="Cancel" formnovalidate>Cancel</button>
+        <button type="submit" class="btn btn-primary" value="Submit">{{change}}</button>
+    </form>
+
+{% endblock %}

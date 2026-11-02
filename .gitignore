@@ -1,0 +1,17 @@
+# Flask sessions
+flask_session/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+
+# Database backup
+planner_backup.db
+
+# Environment variables
+.env
+me.txt

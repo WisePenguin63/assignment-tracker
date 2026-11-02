@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Edit courses
+{% endblock %}
+
+{% block main %}
+    <h1>{{change}} course</h1>
+    <div class="d-flex justify-content-center text-center">
+        <!-- Course Form-->
+        <form class="form-floating mb-3" style="max-width: 400px; width: 100%" action="/courses" method="POST">
+            <!-- Course name -->
+            <div class="form-floating">
+                <!-- ID of course if editing -->
+                {% if course is defined %}
+                    <input type="text" hidden id="id" name="id" value="{{course['id']}}">
+                {% endif %}
+                <input name="name" id="name" class="form-control" placeholder="Course name" type="text" required
+                    {% if course is defined %}
+                        value="{{course['name']}}
+                    {% endif %}" autofill="off">
+                <label for="name">Course name</label><br>
+            </div>
+            <!-- Course description -->
+            <div class="form-floating mb-3">
+                <input name="desc" id="desc" class="form-control" placeholder="Description" type="text" required
+                {% if course is defined %}
+                    value="{{course['details']}}
+                {% endif %}" autofill="off">
+                <label for="name">Course desc</label><br>
+            </div>
+            <!-- Course colour -->
+            <div class="form-floating mb-3">
+                <select class="form-select" id="colour" name="colour" required>
+                    <option {% if course is not defined %}selected{% endif %} disabled hidden value="">Choose a colour</option>
+                    {% for colour in colours %}
+                        <option value="{{colour}}" class="option-{{colour}}"
+                        {% if course is defined and course['colour'] == colour %}selected{% endif %}>
+                        {{colour|capitalize}}</option>
+                    {% endfor %}
+                </select>
+                <label for="colour">Colour</label><br>
+            </div>
+            <!-- Submit -->
+            <button type="submit" class="btn btn-primary" name="submit_button" value="submit_button">Submit</button>
+        </form>
+    </div>
+
+    <!-- Delete -->
+    {% if course is defined %}
+    <div class="d-flex justify-content-center text-center">
+        <form class="form-floating mb-3" style="max-width: 400px; width: 100%" action="/courses" method="POST">
+            {% if course is defined %}
+                <input type="text" hidden id="id" name="id" value="{{course['id']}}">
+            {% endif %}
+            <button type="submit" class="btn btn-danger" name="submit_button" onclick="return confirm('Are you sure you would like to delete this course?\nThis will also delete all assignments associated with this course.')" value="delete_button">Delete</button>
+        </form>
+    </div>
+    {% endif %}
+{% endblock %}
